@@ -2,7 +2,7 @@
 Introduction to R for UC Irvine CEB internship program
 
 **Introduction_to_R.html**
-This is the main tutorial document.  It will open in any web browser.
+This is the main tutorial document.  It will open in any web browser.  Also provided as a .pdf file.
 
 **ACDR_survey.xlsx**
 Data used in tutorial
