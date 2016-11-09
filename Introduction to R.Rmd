@@ -1,0 +1,564 @@
+<!--(
+NOTE: to make pdf
+setwd("~/Documents/Teaching/R Tutorial RMBL 2014")
+knit2pdf("Introduction to R.Rmd", compiler = "xelatex")
+rmd.convert('Introduction to R.Rmd','pdf')
+pandoc('Introduction to R.md', format = 'latex')
+)--> 
+
+
+(R)MBL
+========================================================
+Prepared for the Rocky Mountain Biological Laboratory Undergraduate Education Program  
+by William K Petry
+
+Updated 10 July 2014
+
+1. Tutorial introduction
+--------------------------------------------------------
+R is a programming language for statistical analysis and data visualization. R is rapidly growing in popularity in part because R is:
+
+* free
+* open-source
+* accommodating of new analyses
+
+This tutorial will walk you through the basics of how to use R. Throughout, chunks of code will be displayed and followed by the results of that code. This will look like this:
+
+```{r example chunk}
+# comments and annotations will be preceded with the pound sign
+# real code will look like these two simple additions:
+2+2
+sum(2,2)
+# and we can display plots too where the code will be followed by the plot itself
+plot(1:5,1:5)
+```
+
+2. R and RStudio
+--------------------------------------------------------
+R is both a computer language and program. RStudio is a GUI (graphical user interface) for R, meaning that it lets the user interact with R in a way that many find more user-friendly and efficient. For this tutorial, we'll interact with R exclusively through RStudio, emphasizing how the add-ons offered by RStudio .
+
+To begin, download and install [R](http://cran.r-project.org) and then [RStudio](http://www.rstudio.com/products/rstudio/). Open up RStudio, and you'll see something that looks like this:
+
+![Image of RStudio](http://i.imgur.com/CMBrtl.jpg)
+
+**NOTE:** If you don't have two panels on the left side already, click on the white square with a plus in the top left corner, and select 'R script' from the menu.
+
+### 2.1 RStudio layout ###
+RStudio has four panes, three of which support multiple tabs. By default, the 'Source' is in the top left and the 'Console' on the lower left. On the right side, the top contains 'Environment' and 'History' tabs. Finally, the lower right contains several miscellaneous tabs. We'll look into each of these one by one.
+
+#### 2.1.1 Console (lower left) ####
+This pane is essentially R with all of the others supporting what goes on here. At start-up, you'll see the welcome text from R reporting which version you're using and offering a few tips. Below that, you'll see a ">" and blinking cursor, meaning that R is ready for our commands.
+
+Commands can be typed directly into the Console, and hitting Enter/Return will run the command. Let's give it a try with a basic -- [but profound](http://en.wikipedia.org/wiki/Hello_world_program) -- command.
+
+```print("Hello world")```
+
+Notice that RStudio helps out by automatically inserting the close quote and close parenthesis. If we were sloppy and left one out, R wouldn't know how to handle it. Try deleting the ")".
+
+```print("Hello world"```
+
+That ```+``` sign instead of the ```>``` means that R is expecting us to finish our statement. We can either type ```)`` and hit Enter/Return again, or use the Esc key to quit the current operation and start over.
+
+*Pro tip:* If your console becomes too cluttered, move the cursor down there and press Ctrl + l to clear everything away.
+
+#### 2.1.2 Source (top left) ####
+Typing commands directly into the console is great for a quick and dirty run of your code. But usually we want to check that our code is working throughout and then save it all in a way that we can easily run everything again. The Source pane serves as a basic text editor with a few extra features that make this integration with the console very, very intuitive.
+
+Let's try that same 'Hello world' script again, but this time copy it into the Source pane instead of the console:
+
+```print("Hello world")```
+
+Hitting enter goes to the next line, but doesn't run any of the code (i.e. nothing new shows up in the Console). We can go on to write more lines of code before running. Let's add another statement to the Source pane on line 2:
+
+```print("R is great!")```
+
+To run these lines, simply highlight both of them and press the 'Run' button on the top right of the Source pane. Alternatively, we can run one line at a time by highlighting it or skip highlighting by moving the cursor anywhere on the line we want to run and pressing 'Run'.
+
+#### 2.1.3 Environment/History (upper right) ####
+This pane shows a record of all of the data that we've asked R to remember (Environment) and a running list of everything we've typed into the Console or sent to the Console from the Source pane (History). I usually keep my Environment tab displayed to keep track of what I've named all the pieces of data I am using in an analysis, what type of data they are, and how big they are. Like the Console, this too can be cleared entirely by clicking the 'Clear' button or selectively by checking which objects to remove.
+
+Double clicking any of the commands in the History tab will run that command in the Console again. You can also access this list directly from the Console by simply using the up/down arrow keys. This is very useful if you need to correct a typo or re-import data.
+
+#### 2.1.4 Miscellaneous tabs (lower right) ####
+This pane is the catch all for other helpful RStudio features. Files can be used just like Windows Explorer or Mac's Finder to navigate your computer. Plots shows any graphics you produce. Packages lists the add-on code installed and loaded on your computer (more on this later). Help provides a way to browse the help documentation.
+
+3. Having a conversation with R
+--------------------------------------------------------
+We've covered the basics of how to tell R to do something, but R forgets everything that we've said right after it returns the output of these commands. This isn't very helpful, especially when data analysis is bound to take several steps to get from data import to the final output. This section covers how to carry on a conversation with R where the output of previous commands is remembered and can be accessed later on.
+
+### 3.1 Assignment ###
+Everything we want R to remember must be given a name. A simple symbol, ```<-```, is used to connect the name (on the side to which the arrow is pointing) and the result of the command (aka object, on the other end of the arrow). Reading this assignment command
+
+```{r assignment}
+x <- "Hello world"
+```
+
+as a sentence would sound like "x *is set to* Hello world." Go ahead and run this assignment command to set ```x``` to ```"Hello world"```.
+
+We can make vectors containing multiple values by using the concatenation command:
+
+```{r concat}
+y <- c(1,2,3,4,5,6,7,8,9,10)
+z <- c("a","b","c","d","e","f")
+```
+
+To display the contents of these objects, we can use the ```print()``` command, or simply type it's name:
+```{r printing}
+print(y)
+z
+```
+
+**Note:** Some tutorials will offer the alternative of ```=``` for assigning names to objects. This works just as well in *most* cases, but has the potential to cause confusion for reasons we won't get into here. It's a good idea to get into the habit of using ```<-``` for all name assignments.
+
+### 3.2 Object classes and functions ###
+Objects are pieces of data and functions do things to these data and return other objects that hold the output. To use an analogy to language, objects are like subjects and functions are like verbs. Like spoken languages where subjects and their verbs must agree, in R objects must be compatible with the function applied to it.
+
+Objects can be of many different types. We call these different forms classes, and the object's class will limit which functions can be used on it. For example, trying to multiply ```"Hello world"``` by ```3``` is pretty nonsensical, and R will return an error if you try. We can easily determine the class of an object like this:
+```{r class}
+class(x)
+```
+
+Here, ```"character"``` means that this object is made up of text. Here are some other basic classes of objects you'll encounter:
+
+Class name     What it holds
+-------------  --------------------------------------------------------
+character      text
+numeric        numbers (can be decimal)
+integer        numbers (only integers)
+boolean        true or false
+factor         categorical data
+dataframe      data table (can contain variables of multiple classes)
+matrix         a 2-dimensional matrix (data are all of the same class)
+array          an n-dimensional matrix (data are all of the same class)
+list           a collection of multiple objects of one or more classes
+-------------  --------------------------------------------------------
+
+Additionally, each type of analysis will return an object of its own class. For example, an ANOVA will return an object of class ```aov``` and a simple linear regression will return an object of class ```lm```. Unlike spoken languages, applying a function to an object of one class can result in a very produce an object of a very different class (e.g. the data going into an ANOVA or regression is often ```numeric```, ```factor```, or ```dataframe```).
+
+There is one time you're likely to run into problems with an object's class: importing data. When we get to that section of the tutorial, we'll see how to get around any problems with this using coercion. For now, suffice it to say there are lots of different ways that R can store data, functions can usually only work with a subset of these data classes, and functions may return a different class of object than the object to which the function was applied.
+
+### 3.3 Simple manipulation of numbers ###
+R uses all of the conventional symbols for basic arithmetic and logical operators.
+
+Operation                 Symbol in R
+------------------------  -------------
+Addition                  ```+```
+Subtraction               ```-```
+Multiplication            ```*```
+Division                  ```/```
+Exponents                 ```^``` or ```**```
+Less than                 ```<```
+Greater than              ```>```
+Less than or equal to     ```<=```
+Greater than or equal to  ```>=```
+Equal to                  ```==```
+Not equal to              ```!=```
+Or                        ```|```
+And                       ```&```
+
+What's nice about these functions is that they are not just limited to single values. Rather, they can be applied over whole vectors, dataframes, and matrices. For example,
+```{r functions across multiple values}
+# take a look at the vector of integers we've named y
+y
+# now multiply everything by 3
+y_mult <- y*3
+y_mult
+# we can also logically test whether something is true across a whole vector
+# (useful later to extract parts of a dataset)
+y_mult > 7.5
+```
+
+4. Adding new functions
+--------------------------------------------------------
+### 4.1 Packages ###
+R users (aka useRs) building multiple functions will often share their work by publishing a package on CRAN (http://cran.r-project.org). These packages expand the capabilities of R, and there are currently >5000 packages available for download.
+
+Frankly, the best way to sort through all of these is to use Google. A few suggested packages are included at the end of the document in the Appendix.
+
+The first step is to download the package to your computer. On the 'Packages' tab, click 'Install Packages' and type in the name of the package you want. Let's download a couple at once that we'll use later:
+
+* **car**
+* **effects**
+* **xlsx**
+
+![Installing packages in RStudio](InstallPackages.png)
+
+Make sure 'Install dependencies' is checked, and click install. Now these packages are on your computer, but aren't usable just yet. You'll need to click the check box next to the package name on the 'Packages' tab or use the ```library()``` command.
+
+```library(car)```
+
+```library(effects)```
+
+```library(xlsx)```
+
+You'll see that a few other companion packages are simultaneously loaded. Also, if there are packages with shared names, the last one loaded "owns" that shared name.
+
+### 4.2 Writing functions ###
+One really great aspect of R is that you can write your own functions. Not everything can be found in a package, and writing a function can save a lot of lines of code.
+
+One function that is strangely absent from the base version of R is the calculation for standard error of the mean (SEM or just SE). Many of you may know that the SE for a sample is calculated as: 
+$$SE = \frac{s}{\sqrt n}$$
+where s is the sample standard deviation and n is the sample size. Let's have a look at the syntax of function building:
+
+```{r standard error}
+# Let's start by considering three built-in functions:
+# 1) sd(x) calculates the standard deviation of the vector x
+# 2) sqrt(y) returns the square root of the number y
+# 3) length(z) counts the number of elements in the vector z
+
+SE <- function(x){
+  # any intermediate calculations and data handling goes here
+  # in this case, the function is simple enough to write on one line. We'll wrap it inside the 
+  # return() function so that this function spits out the result of the enclosed calculation.
+  return(sd(x)/sqrt(length(x)))
+}
+```
+
+Note that here we have nested several functions within one another. R will interpret this starting with the inner most function, then applying subsequent functions to the output of the previous function. This is a really powerful feature of the R language that allows you to accomplish multiple steps at once. As a beginner, it may be best to calculate all these steps as intermediates and check their accuracy before putting everything together.
+
+A quick check of our function shows us that it is working correctly:
+```{r SE example}
+# here's the vector that we want to know the standard error of:
+y_mult
+SE(y_mult)
+```
+
+5. Data import
+--------------------------------------------------------
+### 5.1 Dataset description ###
+We'll use a real ecological dataset that has been made publicly available (Kartzinel et al. 2014) for the rest of the tutorial.
+
+Briefly, the experiment was to exclude mammals of different sizes in eastern Kenya between 2008-2013. There were four treatment levels:
+
+* Open (= control)
+* Mega (= giraffes and elephants)
+* Meso (= everything >40 kg)
+* Total (= everything >5 kg)
+
+The researchers replicated each treatment 3 times (called BLOCK in the dataset) at each of 3 sites, except for the control treatment that was only applied once per site. The data we'll use come from a single site and focuses on a single tree species *Acacia drepanolobium* that is consumed by mammalian herbivores and defended by mutualistic ants. The landscape looks something like this:
+
+![View from Mpala](http://thepalmerlab.com/TMP/Photos_files/Media/landscape2/landscape2.jpg)
+
+### 5.2 Importing dataset into R ###
+R knows how to understand a number of file types, but proprietary formats like Excel files are not within this repertoire. We'll start by loading a package that will serve as an interpreter between R and Excel.
+
+```{r data import}
+# load the package xlsx that will let R talk to Excel
+library(xlsx)
+
+# tell R to go get the data from the appropriate file and sheet
+acacia <- read.xlsx("ACDR_survey.xlsx", sheetName = "ACDR_data")
+```
+
+Take a look at the "Environment" pane on the top right of RStudio. We can now see that there's an object in there that is holding our data. In the next section, we'll learn how to use R to make sure everything imported correctly and work with the data without going back to Excel.
+
+6. Data handling and plotting
+--------------------------------------------------------
+In this section, we'll walk through some of the most common tasks that come up right after data are imported and prior to analysis.
+
+### 6.1 Learning about your data ###
+As is probably clear at this point, R is not a spreadsheet program like Excel: instead of pointing, clicking, and dragging, everything is done through code. That said, R and RStudio have some great built-in tools to learn about your data.
+
+Let's start with the most Excel-like format that RStudio can display. Click on the little table icon associated with the object ```acacia``` in the "Environment" pane.  We can now see the data displayed as a table in the "Source" pane, and RStudio has entered and run the command ```View(acacia)``` for us to make this data display happen.
+
+![Data displayed as a table](TableDisplay.png)
+
+Clicking on cells to edit the data won't work like it does in Excel. This feature is strictly for viewing. We can do the same for smaller datasets by typing the name of the object in the Console:
+
+```acacia```
+
+That's a lot of output. Note that the text is a little too wide for the console, so it's wrapped in an awkward way that makes interpretation difficult. Also, we don't know how R is treating each piece of the dataset. Remember object classes in section 3.2? We'd like to know whether each of these is being read appropriately. For that, we can use the ```str``` command.
+
+```{r data structure}
+str(acacia)
+```
+
+The output reports that ```acacia``` is of class "data.frame" and has 15 columns and 157 rows. Additionally for each of those columns, we can see its name, class, and the first few data entries. Everything looks pretty good, except that the variable "HEIGHT" is being treated as a factor rather than a number. Also, BLOCK should probably be treated as a factor. Let's take a look at why this imported this way and fix it in section 6.2.
+
+### 6.2 Subsetting and selective editing ###
+Rather than looking at the whole dataset, let's zoom in on the problem variable "HEIGHT". The syntax to pull out a subset of the data uses the ```$``` symbol between the name of the object holding the data and the part to be extracted.
+
+```{r subsetting}
+acacia$HEIGHT
+```
+
+Entries 21, 124, 126, and 157 are causing the problem because they are text: "dead". R can treat any characters as text, but only numbers can be treated as numbers. R defaults to treating everything in ```acacia$HEIGHT``` as categories.
+
+We could return to Excel, delete "dead" in that column, then re-import the data. But there's a better way to do this just by using R. We'll set those words to ```NA``` which will hold the place in the table without affecting calculations on the other numbers. Essentially this is a "Find & Replace" function.
+
+```{r replace}
+# we can FIND the entries that are "dead" using brackets
+acacia$HEIGHT[acacia$HEIGHT == "dead"]
+# to REPLACE them, just assign them to be something different, here NA
+acacia$HEIGHT[acacia$HEIGHT == "dead"] <- NA
+```
+
+A quick look at ```acacia``` shows that all the "dead" entries have been replaced with ```NA```, but ```str(acacia)``` shows the same problem as before. Because R initially read ```acacia$HEIGHT``` in as a factor, we need to coerce it into class numeric.
+
+```{r coercion}
+acacia$HEIGHT <- as.numeric(as.character(acacia$HEIGHT))
+# now we can see that str(acacia) shows the problem is fixed
+str(acacia)
+```
+
+Coercing a number into a factor doesn't require this last step because numbers can be treated as text without any problems:
+```{r coercion2}
+acacia$BLOCK <- as.factor(acacia$BLOCK)
+```
+
+### 6.3 Summarizing and visualizing raw data ###
+Looking at data as numbers isn't a good way for most people to understand patterns in their data. Let's take a look at a few plots and tables of some of the variables in ```acacia```. Let's build a histogram of ```acacia$HEIGHT```.
+
+```{r histogram}
+hist(acacia$HEIGHT)
+```
+
+Those bins are pretty chunky and would be worth examining in greater detail. Almost all functions in R have some options associated with them. To see what these are, let's open the help file using the ```?``` command:
+
+```?hist```
+
+R documentation can be pretty heavy sledding to interpret, so at the beginning Google may be a better friend for troubleshooting. The option that we want is "breaks" that by default is "Sturges", but we can set to any number we like.
+
+```{r histogram2}
+hist(acacia$HEIGHT, breaks = 15)
+```
+
+Histograms are great for continuous data, but tables are more useful for categorical data. Let's look at the breakdown of ant species found living on the trees.
+
+```{r table summary}
+table(acacia$ANT)
+```
+
+7. Basic statistical tests
+--------------------------------------------------------
+In this section, we'll test a simple hypotheses using the example dataset:
+
+**H~a~: Herbivore exclusion increases tree growth.**
+
+### 7.1 Checking assumptions ###
+All statistical tests make some sort of assumption, some of which involve how the data were collected while others involve characteristics of the collected data. For the latter, R has some functions to test whether our data are suitable for use in a given statistical test. For parametric analyses like ANOVA and regression, the two assumptions we should check are:
+
+1. normality of the residuals -- the amount each replicate deviates from the mean follows the normal distribution
+2. homoscedasticity -- the data in each group have equal variances around the mean
+
+For the first, we can inspect the data visually using a quantile plot of the response variable (though other more quantitative methods also exist, see the function ```shapiro.test()```).
+
+```{r qqplot}
+# the first function plots the data, the second shows the line on which points should fall
+# if the data are normally distributed
+qqnorm(acacia$HEIGHT)
+qqline(acacia$HEIGHT)
+```
+
+This isn't too big a departure from normality, but we can try out a data transformation (specifically, the square root transformation) to try to reel in these residuals.
+
+```{r data transform}
+# make a new column in "acacia" and fill it with the transformed data
+acacia$HEIGHT.log <- log(acacia$HEIGHT)
+
+# now make a new quantile plot
+qqnorm(acacia$HEIGHT.log)
+qqline(acacia$HEIGHT.log)
+```
+
+The new quantile plot is a bit better, and the analyses we'll use are usually robust to a violation of this magnitude.
+
+A check of the homogeneity of variance shows a problem:
+
+```bartlett.test(HEIGHT.log~TREATMENT, data = acacia)```
+
+R returns an error message that says there must be at least two observations in each group in order to run this test (and the same holds for the hypothesis tests we want to use). We can first look at ```table()```:
+
+```{r table}
+table(acacia$TREATMENT)
+```
+
+The number of control plots is pretty small (n=3), but this doesn't explain the error message. We need to look closer at the subset of OPEN treatments:
+
+```{r troubleshoot}
+acacia[acacia$TREATMENT == "OPEN",]
+```
+
+Even though there are 3 rows that hold data for the OPEN treatment, two of them are missing HEIGHT (and therefore HEIGHT.log) data. It appears these trees were destroyed by herbivores, and this control was poorly replicated. Because the data aren't there to compare all four treatments, we'll have to drop the OPEN treatment and re-frame our question slightly to ask about growth under the three exclusion types.
+
+Lesson to learn: Always replicate the control!
+
+```{r exclusion subset}
+# use a logical subset to select everything that is NOT in the OPEN treatment
+acacia_exclude <- acacia[acacia$TREATMENT != "OPEN",]
+
+# use str to check that everything worked
+str(acacia_exclude)
+
+# good, we're down from 157 observations to 154 (i.e. the 3 OPEN replicates were removed)
+# but TREATMENT still shows as a factor with 4, instead of 3, levels
+# R counted those factor levels when the data were first imported, so we need to tell R
+# to recount the levels of TREATMENT
+acacia_exclude$TREATMENT <- factor(acacia_exclude$TREATMENT)
+str(acacia_exclude)
+```
+
+### 7.2 t-tests ###
+One of the most basic tests to compare means between two groups is to use a t-test. This test has a long and interesting history (involving Guinness beer!), but is still widely used.
+
+Let's test for a difference between the MEGA and TOTAL herbivore exclusion plots.
+
+```{r t test}
+# let's start by subsetting the data to extract only these two parts
+MEGA.HEIGHT <- acacia_exclude$HEIGHT.log[acacia_exclude$TREATMENT == "MEGA"]
+TOTAL.HEIGHT <- acacia_exclude$HEIGHT.log[acacia_exclude$TREATMENT == "TOTAL"]
+
+# now open the help file so we can see the order to enter commands
+?t.test
+
+# we know our variances are equal, so we can set that option to TRUE for a more powerful test
+t.test(MEGA.HEIGHT, TOTAL.HEIGHT, var.equal = TRUE)
+```
+
+### 7.3 Linear models ###
+Testing each of these treatment comparisons is statistically problematic not to mention tedious. Let's use an ANOVA to do a single test across all treatments.
+
+```{r anova}
+# we can use an optional data argument to avoid writing "acacia_exclude$" over and over again
+growth.anova <- lm(HEIGHT.log ~ TREATMENT, data = acacia_exclude)
+anova(growth.anova)
+```
+
+This is a very simplistic model to understand a complicated system. Let's add in some more information on these trees as covariates. Specifically, let's account for the BLOCK the tree grows in and also the ANT in residence on the tree.
+
+```{r anova2}
+growth.anova2 <- lm(HEIGHT.log ~ TREATMENT + BLOCK + ANT, data = acacia_exclude)
+# load a package that will calculate the right p-value when there are multiple factors in the model
+library(car)
+Anova(growth.anova2, type = 3)
+```
+
+We can see that TREATMENT is no longer significant, essentially all the TREATMENT differences among trees are really caused by differences among BLOCK.
+
+### 7.4 Least square (marginal) means ###
+Often we want to report the means of each treatment without including the effect of other treatments. You may hear these means referred to as least square or marginal means. We'll use a package called ```effects{}``` to calculate these values appropriately from the regression we just ran.
+
+```{r LS means}
+# load the package that calculates least square means
+library(effects)
+
+# Let's look at the effect of BLOCK while controling for everything else.
+summary(effect("BLOCK", mod = growth.anova2))
+
+# Compare these to the raw means using the aggregate() function:
+aggregate(HEIGHT.log ~ BLOCK, acacia_exclude, mean)
+```
+
+8. Putting it all together
+--------------------------------------------------------
+Noah Whiteman's lab (including RMBL undergrad alumna Martha Villalobos) recently published a study where they were trying to understand how the macro (=herbivores) and micro (=bacteria) enemies of plants interact through their effects on plant defense systems. The work took place at Emerald Lake just up valley from RMBL. Here are the main players in the system (image and caption from Humphrey et al. 2014):
+
+****
+
+![Cardamine cordifolia community](CACO_community.png)
+
+Overview of study organisms and types of leaf damage. (A) Subalpine study population of bittercress near the Rocky Mountain Biological Laboratory from which the leaves in this study were sampled (near outflow of Emerald Lake, elevation 3182 m). (B) *Scaptomyza nigrita* adult female. (C) *S. nigrita* larva mining bittercress leaf (white arrow indicates larva). (D) *Phaedon* sp. chrysomelid (leaf) beetle (*Phaedon aeuruginosa* depicted; photograph by Sandy Rae). (E) *Phaedon* sp. damage (black arrows indicate removed leaf area). (F) Bittercress inflorescence. (G) Chlorosis in a bittercress leaf (arrow indicates border between chlorotic and nonchlorotic leaf tissue).
+
+****
+
+This study focused on teasing apart what plants do when they are subjected to attack on multiple fronts. As part of this, they asked: Does insect herbivory increase the severity of bacterial infections? They collected data on the amount of bacteria on a set of leaves and related it to measures of herbivore damage and a few other potentially important covariates based on their deep knowledge of this system. In this exercise, we'll bring together skills we've just learned in R -- from data import to analysis -- to answer this question. Find and import the data file **leaf.master.199.xlsx** and run a regression to test whether **Total Bacteria (tot.cfu in the dataset)** is driven by the following:
+
+* Leaf miner (*S. nigrita*) damage (called **prop.mined**)
+* Beetle (*Phaedon* spp.) damage (called **prop.beetle**)
+* Chlorosis (= yellowing of the leaf, called **prop.yellow**)
+* Leaf position on the plant (called **leaf.num**)
+
+Throughout, you'll have to troubleshoot as these are real data with potential problems that are likely to arise in your own data analyses. Specifically, you should think about:
+
+* Is the working directory set correctly?
+* Did all the data import?
+* Are the variables of the appropriate class?
+* Do your data meet the assumptions of the statistical test you want to use (hint: try a log~10~ transform using the function ```log10()``` if not)?
+
+You should report:
+
+1) a histogram of the response variable
+2) a quantile plot of the data used in the analysis (e.g. transformed if needed)
+3) the statistics (F and p-values) for each independent variable
+
+Bibliography
+--------------------------------------------------------
+I am indebted to the authors of several sources used to compile this tutorial. Each provides excellent further reading on topics covered here as well as more advanced topics we were unable to cover here:
+
+* Benjamin Blonder's 'An Introduction to R for Ecologists' -- http://www.benjaminblonder.org/rworkshop/
+* Josh Grinath and Zak Gezon's R tutorials run at the Rocky Mountain Biological Laboratory in 2012 & 2013
+* QuickR -- http://www.statmethods.net
+* The R Book -- http://www.wiley.com/WileyCDA/WileyTitle/productCd-0470973927.html
+* An Introduction to R -- http://cran.r-project.org/doc/manuals/R-intro.pdf
+* R Language Definition -- http://cran.r-project.org/doc/manuals/r-release/R-lang.html
+
+The datasets used in this tutorial came from the following:
+
+* Kartzinel, T. R., J. R. Goheen, G. K. Charles, E. DeFranco, J. E. Maclean, T. O. Otieno, T. M. Palmer, and R. M. Pringle. 2014. Plant and small-mammal responses to large-herbivore exclusion in an African savanna: five years of the UHURU experiment. Ecology 95:787. http://dx.doi.org/10.1890/13-1023.1 [photo from: http://thepalmerlab.com/]
+* Humphrey, P. T., T. T. Nguyen, M. M. Villalobos, and N. K. Whiteman. 2014. Diversity and abundance of phyllosphere bacteria are linked to insect herbivory. Molecular Ecology, 23: 1497–1515. http://dx.doi.org/10.1111/mec.12657
+
+Appendix A -- Useful packages
+--------------------------------------------------------
+Below is a list of packages I count among my personal favorites.
+
+Package name  | Brief description
+------------- | ----------------------------------------------------
+ape           | Phylogenetic tools and analyses
+car           | Helper functions for regression and ANOVA
+effects       | Calculation of model effects
+ggplot2       | Publication quality and highly customizable graphics
+knitr         | Used to render this tutorial from a mix of Rmarkdown, plain text, and R code
+lme4          | Analysis of mixed effect models
+nlme          | Analysis of mixed effect models
+popbio        | Analysis of matrix population models
+picante       | Phylogenetic tools and analyses
+reshape2      | Data reorganization
+vegan         | Ordination techniques for community analysis
+xlsx          | Data import/export between R and Microsoft Excel
+
+Appendix B -- Exercise answers
+--------------------------------------------------------
+Here are the answers for the excercise on the bacteria and herbivores of *Cardamine cordifolia*. It takes the form of commented code.
+
+```{r excercise answers}
+# first begin by pointing your working directory to where you've stored the data
+# this is easiest to do in RStudio using the Files tab in the lower right corner
+# and clicking 'More' > 'Set As Working Directory'
+# (note: your file path may be different, and the syntax differs between PC and Mac)
+setwd("~/Documents/Teaching/R_Tutorial_RMBL_2014")
+
+# now read in the data file from Excel using the package xlsx, then subset to the columns we're using
+library(xlsx)
+cardamine <- read.xlsx("leaf.master.199.xlsx", sheetName = "community_data")
+cardamine.sub <- subset(cardamine, select = c("tot.cfu", "prop.mined", "prop.beetle", "prop.yellow", "leaf.num"))
+
+# check that everything imported correctly
+str(cardamine.sub)
+
+# leaf.num came in as a factor because some values were listed as NA
+cardamine.sub$leaf.num
+
+# it should be a number (i.e. leaf 2 is always between leaves 1 and 3)
+# first set the text "NA" to the R default for missing values, NA
+# then coerce the vector to class numeric
+cardamine.sub$leaf.num[cardamine.sub$leaf.num == "NA"] <- NA
+cardamine.sub$leaf.num <- as.numeric(cardamine.sub$leaf.num)
+
+# one more check show's everything is now ready for data analysis
+str(cardamine.sub)
+
+# check for normality using quantile plot
+qqnorm(cardamine.sub$tot.cfu)
+qqline(cardamine.sub$tot.cfu)
+
+# a transformation is definitely needed, we'll use a log base 10
+cardamine.sub$log.tot.cfu <- log10(cardamine.sub$tot.cfu)
+qqnorm(cardamine.sub$log.tot.cfu)
+qqline(cardamine.sub$log.tot.cfu)
+
+# now build the model
+bact.herb.mod <- lm(log.tot.cfu ~ prop.mined + prop.beetle + prop.yellow + leaf.num, data = cardamine.sub)
+
+# calculate parameter estimates and p-values
+summary(bact.herb.mod)
+```
